@@ -6,6 +6,8 @@ class Auth extends CI_Controller {
         
         parent::__construct();
         $this->load->model('user_model');
+        
+        $this->load->library('email');
     }
     
     public function view($page = 'home') {
@@ -77,6 +79,12 @@ class Auth extends CI_Controller {
             
             if ($id != null) {
                 $this->session->userid = $id;
+                
+                $this->email->from('cookandbake@pingwinek.de', 'Cook and Bake');
+                $this->email->to('jens.reufsteck@gmail.com');
+                $this->email->subject('cookandbake');
+                $this->email->message('user with email ' . $this->input->post('email') . ' logged in.');
+                $this->email->send();
                 
                 $data['authenticated'] = 'isAuthenticated';
                 $this->load->view('auth/login', $data);

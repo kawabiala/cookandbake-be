@@ -37,7 +37,7 @@ class Recipe extends CI_Controller {
             $this->get($this->recipe_model->get_value('id'));
         } else {
             if (is_array($this->recipe_model->error)) {
-                $this->error(400, $this->recipe->error['code'] + ': ' + $this->recipe->error['message']);
+                $this->error(400, $this->recipe_model->error['code'] . ': ' . $this->recipe_model->error['message']);
             } else {
                 $this->error(400, 'undefined database error');
             }
@@ -62,7 +62,7 @@ class Recipe extends CI_Controller {
             $this->get($this->recipe_model->get_value('id'));
         } else {
             if (is_array($this->recipe_model->error)) {
-                $this->error(400, $this->recipe_model->error['code'] + ': ' + $this->recipe_model->error['message']);
+                $this->error(400, $this->recipe_model->error['code'] . ': ' . $this->recipe_model->error['message']);
             } else {
                 $this->error(400, 'undefined database error');
             }
