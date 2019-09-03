@@ -74,6 +74,7 @@ $route['api/recipe/(:num)/ingredient']['GET'] = 'ingredient/get_all/$1';
 $route['api/(:any)'] = 'api/view/$1';
 
 $route['auth/login'] = 'auth/login';
+$route['auth/refresh'] = 'auth/loginWithRefreshToken';
 $route['auth/register'] = 'auth/register';
 
 $route['(:any)'] = 'pages/view/$1';

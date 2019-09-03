@@ -8,6 +8,9 @@ class Auth extends CI_Controller {
         $this->load->model('user_model');
         
         $this->load->library('email');
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+        
     }
     
     public function view($page = 'home') {
@@ -25,77 +28,113 @@ class Auth extends CI_Controller {
     
     public function register($page = 'register') {
         
-        $this->load->helper('form');
-        $this->load->library('form_validation');
-        
-        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('password', 'Passwort', 'required');
         
         if ($this->form_validation->run() === FALSE) {
-            $msg = array('error' => 'Provided credentials could not be validated');
-            
-            $this->output
-                ->set_status_header(400)
-                ->set_content_type('application/json', 'utf-8')
-                ->set_output(json_encode($msg));
+        	$this->error(400, 'Provided credentials could not be validated (e.g. email address not valid)');
         } else {
             $isInserted = $this->user_model->register(
                 $this->input->post('email'), 
                 $this->input->post('password'));
 
             if ($isInserted) {
-                $this->load->view('auth/register');
+            	$this->sendEmail($this->input->post('email'), 'Welcome', 'Welcome to Cook and Bake');
+            	$data['msg'] = $this->input->post('email') . ' registered.';
+                $this->response($data);
             } else {
-            $msg = array('error' => 'Email already exists');
-            
-            $this->output
-                ->set_status_header(400)
-                ->set_content_type('application/json', 'utf-8')
-                ->set_output(json_encode($msg));
+	        	$this->error(400, 'Email already exists');
             }
         }
     }
     
     public function login($page = 'login') {
         
-        $this->load->helper('form');
-        $this->load->library('form_validation');
-        
         $this->form_validation->set_rules('email', 'Email', 'required');
         $this->form_validation->set_rules('password', 'Passwort', 'required');
         
         if ($this->form_validation->run() === FALSE) {
-            $msg = array('error' => 'Provided credentials could not be validated');
-            
-            $this->output
-                ->set_status_header(400)
-                ->set_content_type('application/json', 'utf-8')
-                ->set_output(json_encode($msg));
+        	$this->error(400, 'Provided credentials could not be validated');
         } else {
             $id = $this->user_model->verify(
                 $this->input->post('email'), 
                 $this->input->post('password'));
-            log_message('debug', $this->input->as_json);
             
             if ($id != null) {
-                $this->session->userid = $id;
+
+                $data['refresh_token'] = $this->generateToken();
                 
-                $this->email->from('cookandbake@pingwinek.de', 'Cook and Bake');
-                $this->email->to('jens.reufsteck@gmail.com');
-                $this->email->subject('cookandbake');
-                $this->email->message('user with email ' . $this->input->post('email') . ' logged in.');
-                $this->email->send();
-                
-                $data['authenticated'] = 'isAuthenticated';
-                $this->load->view('auth/login', $data);
+                if ($this->user_model->save_refresh_token($id, $data['refresh_token'])) {
+	                $this->session->userid = $id;
+	                $this->response($data);
+                } else {
+	            	$this->error(400, 'Error while creating refresh_token');
+                }
             } else {
-            $msg = array('error' => 'Provided credentials could not be verified');
-            
-            $this->output
-                ->set_status_header(401)
-                ->set_content_type('application/json', 'utf-8')
-                ->set_output(json_encode($msg));
+            	$this->error(401, 'Provided credentials could not be verified');
             }
         }
     }
+    
+    public function loginWithRefreshToken() {
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('refresh_token', 'Token', 'required');
+        
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Provided token could not be validated');
+        } else {
+            $id = $this->user_model->verify_refresh_token(
+                $this->input->post('email'), 
+                $this->input->post('refresh_token'));
+            
+            if ($id != null) {
+
+                $data['refresh_token'] = $this->generateToken();
+                
+                if ($this->user_model->save_refresh_token($id, $data['refresh_token'])) {
+	                $this->session->userid = $id;
+	                $this->response($data);
+                } else {
+	            	$this->error(400, 'Error while creating refresh_token');
+                }
+            } else {
+            	$this->error(401, 'Provided token could not be verified');
+            }
+        }
+    }
+    
+    private function sendEmail($to, $subject, $msg) {
+		$this->email->from('cookandbake@pingwinek.de', 'Cook and Bake');
+		$this->email->to($to);
+		$this->email->subject($subject);
+		$this->email->message($msg);
+		$this->email->send();
+    }
+    
+    private function generateToken() {
+    	return bin2hex(random_bytes(64));
+    }
+    
+    private function response($msg) {
+        if (is_array($msg)) {
+            $this->send_response(200, $msg);
+        } else {
+            $this->error(400, 'Malformed response body: ' + $msg);
+        }
+    }
+    
+    private function error($code, $msg) {
+        $msg = array("error" => $msg);
+        $this->send_response($code, $msg);
+    }
+    
+    private function send_response($code, $msg) {
+        $this->output
+            ->set_status_header($code)
+            ->set_content_type('application/json', 'utf-8')
+            ->set_output(json_encode($msg))
+            ->_display();
+        exit();
+    }
+    
 }

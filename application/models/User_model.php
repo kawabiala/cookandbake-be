@@ -29,4 +29,22 @@ class User_model extends CI_Model {
         return password_verify($password, $hashed_password) ? $id : null;
     }
     
+    public function verify_refresh_token($email, $token) {
+        $this->db->select('id');
+        $this->db->where('email', $email);
+        $this->db->where('refresh_token', $token);
+        $query = $this->db->get($this->table_name);
+        
+        $row = $query->row();
+        return isset($row->id) ? $row->id : null;
+        
+    }
+    
+    public function save_refresh_token($id, $token) {
+    	$this->db->where('id', $id);
+    	$data = array(
+	    	'refresh_token' => $token
+    	);
+    	return $this->db->update($this->table_name, $data);
+    }
 }
