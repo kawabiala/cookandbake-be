@@ -52,6 +52,7 @@ class Auth extends CI_Controller {
         
         $this->form_validation->set_rules('email', 'Email', 'required');
         $this->form_validation->set_rules('password', 'Passwort', 'required');
+        $this->form_validation->set_rules('uuid', 'UUID', 'required');
         
         if ($this->form_validation->run() === FALSE) {
         	$this->error(400, 'Provided credentials could not be validated');
@@ -64,11 +65,15 @@ class Auth extends CI_Controller {
 
                 $data['refresh_token'] = $this->generateToken();
                 
-                if ($this->user_model->save_refresh_token($id, $data['refresh_token'])) {
+                if ($this->user_model->save_refresh_token(
+                	$id, 
+                	$data['refresh_token'],
+                	$this->input->post('uuid'))) 
+                {
 	                $this->session->userid = $id;
 	                $this->response($data);
                 } else {
-	            	$this->error(400, 'Error while creating refresh_token');
+	            	$this->error(400, 'Error while creating refresh_token: '.$this->user_model->error['message']);
                 }
             } else {
             	$this->error(401, 'Provided credentials could not be verified');
@@ -79,28 +84,40 @@ class Auth extends CI_Controller {
     public function loginWithRefreshToken() {
         $this->form_validation->set_rules('email', 'Email', 'required');
         $this->form_validation->set_rules('refresh_token', 'Token', 'required');
+        $this->form_validation->set_rules('uuid', 'UUID', 'required');
         
         if ($this->form_validation->run() === FALSE) {
         	$this->error(400, 'Provided token could not be validated');
         } else {
             $id = $this->user_model->verify_refresh_token(
                 $this->input->post('email'), 
-                $this->input->post('refresh_token'));
+                $this->input->post('refresh_token'),
+                $this->input->post('uuid'));
             
             if ($id != null) {
 
                 $data['refresh_token'] = $this->generateToken();
                 
-                if ($this->user_model->save_refresh_token($id, $data['refresh_token'])) {
+                if ($this->user_model->save_refresh_token(
+                	$id, 
+                	$data['refresh_token'], 
+                	$this->input->post('uuid')))
+                {
 	                $this->session->userid = $id;
 	                $this->response($data);
                 } else {
 	            	$this->error(400, 'Error while creating refresh_token');
                 }
             } else {
-            	$this->error(401, 'Provided token could not be verified');
+            	$this->error(401, 'Provided token could not be verified '.$this->user_model->error['message']);
             }
         }
+    }
+    
+    public function changePassword() {
+//    	$msg = '<a href="http://www.cookandbake.de">Click here</a>';
+    	$msg = '<a href="https://www.pingwinek.de/cookandbake">Click here</a>';
+    	$this->sendEmail('jens.reufsteck@gmail.com', 'Change Password', $msg);
     }
     
     private function sendEmail($to, $subject, $msg) {
@@ -108,6 +125,7 @@ class Auth extends CI_Controller {
 		$this->email->to($to);
 		$this->email->subject($subject);
 		$this->email->message($msg);
+		$this->email->set_mailtype('html');
 		$this->email->send();
     }
     

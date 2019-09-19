@@ -76,5 +76,6 @@ $route['api/(:any)'] = 'api/view/$1';
 $route['auth/login'] = 'auth/login';
 $route['auth/refresh'] = 'auth/loginWithRefreshToken';
 $route['auth/register'] = 'auth/register';
+$route['auth/change_password'] = 'auth/changePassword';
 
 $route['(:any)'] = 'pages/view/$1';
