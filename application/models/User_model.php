@@ -57,6 +57,39 @@ class User_model extends CI_Model {
     	}
     }
     
+    public function save_temp_code($email, $code) {
+    	$data = array(
+    		'temp_code' => $code,
+    		'temp_code_valid_until' => date('Y-m-d H:i:s', strtotime('+ 2 days'))
+    	);
+    	$this->db->where('email', $email);
+    	
+    	$result = $this->db->update($this->table_name, $data);
+    	$this->error = $this->db->error();
+    	return $result;
+    }
+    
+    public function verify_temp_code($email, $code) {
+    	$this->db->select('id', 'temp_code_valid_until');
+    	$this->db->where('email', $email);
+    	$this->db->where('temp_code', $code);
+    	$query = $this->db->get($this->table_name);
+    	
+    	if ($query == false) {
+    		$this->error = $this->db->error();
+    		return false;
+    	} else {
+    		$row = $query->row();
+    		if (isset($row->id) && $row->temp_code_valid_until > date('Y-m-d H:i:s')) {
+    			$this->db->where('id', $row->id);
+    			$data = array('confirmed' => true);
+    			return $this->db->update($this->table_name);
+    		} else {
+    			return false;
+    		}
+    	}
+    }
+    
     private function update_refresh_token($id, $token, $uuid) {
     	$this->db->where('user_id', $id);
     	$this->db->where('uuid', $uuid);

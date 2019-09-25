@@ -73,9 +73,12 @@ $route['api/recipe/(:num)/ingredient']['GET'] = 'ingredient/get_all/$1';
 
 $route['api/(:any)'] = 'api/view/$1';
 
-$route['auth/login'] = 'auth/login';
+$route['auth/login'] = 'auth/loginWithPassword';
 $route['auth/refresh'] = 'auth/loginWithRefreshToken';
 $route['auth/register'] = 'auth/register';
 $route['auth/change_password'] = 'auth/changePassword';
+$route['auth/lost_password'] = 'auth/lostPassword';
+$route['auth/new_password'] = 'auth/newPassword';
+$route['auth/confirm_registration'] = 'auth/confirmRegistration';
 
 $route['(:any)'] = 'pages/view/$1';

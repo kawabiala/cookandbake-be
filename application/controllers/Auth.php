@@ -6,6 +6,7 @@ class Auth extends CI_Controller {
         
         parent::__construct();
         $this->load->model('user_model');
+        $this->load->model('user_model_new');
         
         $this->load->library('email');
         $this->load->helper('form');
@@ -13,74 +14,76 @@ class Auth extends CI_Controller {
         
     }
     
-    public function view($page = 'home') {
-        
-        if (! file_exists(APPPATH.'views/auth/'.$page.'.php')) {
-            show_404();
-        }
-        
-        // Data-Array handed to views
-        $data = null;
-        
-        //$this->load->view($page, $data);
-        $this->load->view('auth/'.$page, $data);
-    }
+    private const TOKEN_LENGTH = 64;
+    private const TEMP_CODE_LENGTH = 16;
     
-    public function register($page = 'register') {
+    // registration with sending an email with confirmation code
+    public function register() {
         
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('password', 'Passwort', 'required');
         
         if ($this->form_validation->run() === FALSE) {
         	$this->error(400, 'Provided credentials could not be validated (e.g. email address not valid)');
-        } else {
-            $isInserted = $this->user_model->register(
-                $this->input->post('email'), 
-                $this->input->post('password'));
-
-            if ($isInserted) {
-            	$this->sendEmail($this->input->post('email'), 'Welcome', 'Welcome to Cook and Bake');
-            	$data['msg'] = $this->input->post('email') . ' registered.';
-                $this->response($data);
-            } else {
-	        	$this->error(400, 'Email already exists');
-            }
+        }             
+        
+        $this->user_model_new->setValue('email', $this->input->post('email'));
+        $this->user_model_new->setValue(
+        	'hashed_password', 
+        	password_hash($this->input->post('email'), PASSWORD_DEFAULT));
+/*
+        $this->user_model_new->setValue(
+        	'temp_code', $this->generateTempCode());
+        $this->user_model_new->setValue(
+        	'temp_code_valid_until', date('Y-m-d H:i:s', strtotime('+ 2 days')));
+*/
+        	
+        if (! $this->user_model_new->newUser())  {
+			$this->error(400, 'Something went wrong, e.g. Email already exists');
         }
+/*		
+		$this->sendEmail(
+			$this->input->post('email'), 
+			'Welcome', 
+			$this->getConfirmMailBody($this->user_model_new->getValue('temp_code')));
+*/
+		$this->sendConfirmationMail($this->input->post('email'));
+		$data['msg'] = $this->input->post('email') . ' registered.';
+		$this->response($data);
     }
     
-    public function login($page = 'login') {
+    // regular login with password
+    public function loginWithPassword() {
         
+        // validate input
         $this->form_validation->set_rules('email', 'Email', 'required');
         $this->form_validation->set_rules('password', 'Passwort', 'required');
         $this->form_validation->set_rules('uuid', 'UUID', 'required');
         
         if ($this->form_validation->run() === FALSE) {
         	$this->error(400, 'Provided credentials could not be validated');
-        } else {
-            $id = $this->user_model->verify(
-                $this->input->post('email'), 
-                $this->input->post('password'));
-            
-            if ($id != null) {
-
-                $data['refresh_token'] = $this->generateToken();
-                
-                if ($this->user_model->save_refresh_token(
-                	$id, 
-                	$data['refresh_token'],
-                	$this->input->post('uuid'))) 
-                {
-	                $this->session->userid = $id;
-	                $this->response($data);
-                } else {
-	            	$this->error(400, 'Error while creating refresh_token: '.$this->user_model->error['message']);
-                }
-            } else {
-            	$this->error(401, 'Provided credentials could not be verified');
-            }
         }
+        
+        // load User
+        $this->loadUser();
+			
+        // verify password
+		if (!password_verify(
+			$this->input->post('password'),
+			$this->user_model_new->getValue('hashed_password'))) 
+		{
+			$this->error(401, 'Provided credentials could not be verified');
+		}
+		
+    	if ($this->user_model_new->getValue('confirmed') == 0) {
+    		$this->sendConfirmationMail($this->input->post('email'));
+    		$this->error(206, 'Please confirm the account');
+    	}		
+		
+		$this->login();
     }
     
+    // login based on refresh token
     public function loginWithRefreshToken() {
         $this->form_validation->set_rules('email', 'Email', 'required');
         $this->form_validation->set_rules('refresh_token', 'Token', 'required');
@@ -88,36 +91,184 @@ class Auth extends CI_Controller {
         
         if ($this->form_validation->run() === FALSE) {
         	$this->error(400, 'Provided token could not be validated');
-        } else {
-            $id = $this->user_model->verify_refresh_token(
-                $this->input->post('email'), 
-                $this->input->post('refresh_token'),
-                $this->input->post('uuid'));
-            
-            if ($id != null) {
-
-                $data['refresh_token'] = $this->generateToken();
-                
-                if ($this->user_model->save_refresh_token(
-                	$id, 
-                	$data['refresh_token'], 
-                	$this->input->post('uuid')))
-                {
-	                $this->session->userid = $id;
-	                $this->response($data);
-                } else {
-	            	$this->error(400, 'Error while creating refresh_token');
-                }
-            } else {
-            	$this->error(401, 'Provided token could not be verified '.$this->user_model->error['message']);
-            }
         }
+        
+        $this->loadUser();
+        
+        // verify token
+        if ($this->user_model_new->getValue('refresh_token') != $this->input->post('refresh_token')) {
+        	log_message('debug', 'token provided: ' . $this->input->post('refresh_token') . ' local: ' . $this->user_model_new->getValue('refresh_token'));
+        	$this->error(401, 'Provided token could not be verified');
+        }
+        
+    	if ($this->user_model_new->getValue('confirmed') == 0) {
+    		$this->error(206, 'Please confirm the account');
+    	}
+        
+        $this->login();
     }
     
+    // Confirms registration by handing in the temporary code
+    public function confirmRegistration() {
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('temp_code', 'Temporärer Code', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Provided email or code could not be validated');
+        }
+        
+        $this->loadUser();
+        
+        if ($this->user_model_new->getValue('temp_code') != $this->input->post('temp_code')) {
+        	$this->error(400, 'Provided email or code could not be verified');
+        }
+        
+        if ($this->user_model_new->getValue('temp_code_valid_until') < date('Y-m-d H:i:s')) {
+        	$this->error(402, 'Provided code not valid anymore');
+        }
+        
+        $this->user_model_new->setValue('confirmed', 1);
+        if (! $this->user_model_new->updateConfirmed()) {
+        	$this->error(400, 'Error wail confirming');
+        }
+        
+        $data['confirmed'] = 'confirmed';
+        $this->response($data);
+    }
+    
+    // Indicates, that a new password is needed
+    // Triggers sending a temporary code
+    public function lostPassword() {
+        $this->form_validation->set_rules('email', 'Email', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Provided email could not be validated');
+        }
+        
+        $this->loadUser();
+        
+        $this->user_model_new->setValue(
+        	'temp_code', $this->generateTempCode());
+        $this->user_model_new->setValue(
+        	'temp_code_valid_until', date('Y-m-d H:i:s', strtotime('+ 2 days')));
+        	
+        if (! $this->user_model_new->updateTempCode()) {
+        	$this->error(400, 'Something went wrong');
+        }
+
+		$this->sendEmail(
+			$this->input->post('email'), 
+			'Set New Password', 
+			$this->getLostPasswordMailBody($this->user_model_new->getValue('temp_code')));
+		$data['msg'] = 'New password mail for ' . $this->input->post('email') . ' sent.';
+		$this->response($data);
+    }
+    
+    // Authenticates with a temporary code and sets the new password
+    public function newPassword() {
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('temp_code', 'Temporärer Code', 'required');
+        $this->form_validation->set_rules('password', 'Passwort', 'required');
+        
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Provided email or code could not be validated');
+        }
+        
+        $this->loadUser();
+        
+        if ($this->user_model_new->getValue('temp_code') != $this->input->post('temp_code')) {
+        	$this->error(400, 'Provided email or code could not be verified');
+        }
+        
+        if ($this->user_model_new->getValue('temp_code_valid_until') < date('Y-m-d H:i:s')) {
+        	$this->error(402, 'Provided code not valid anymore');
+        }
+        
+        $this->user_model_new->setValue(
+        	'hashed_password',
+        	password_hash($this->input->post('password'), PASSWORD_DEFAULT));
+        	
+        if (! $this->user_model_new->updatePassword()) {
+        	$this->error(400, 'Error wail updating password');
+        }
+        
+        $data['new password'] = 'set';
+        $this->response($data);
+    }
+    
+    // authenticate with email and password and set new password
     public function changePassword() {
-//    	$msg = '<a href="http://www.cookandbake.de">Click here</a>';
-    	$msg = '<a href="https://www.pingwinek.de/cookandbake">Click here</a>';
-    	$this->sendEmail('jens.reufsteck@gmail.com', 'Change Password', $msg);
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('old_password', 'Altes Passwort', 'required');
+        $this->form_validation->set_rules('new_password', 'Neues Passwort', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Provided email or code could not be validated');
+        }
+        
+        $this->loadUser();
+        
+		if (!password_verify(
+			$this->input->post('old_password'),
+			$this->user_model_new->getValue('hashed_password'))) 
+		{
+			$this->error(401, 'Provided credentials could not be verified');
+		}
+		
+    	if ($this->user_model_new->getValue('confirmed') == 0) {
+    		$this->error(402, 'Account not confirmed');
+    	}
+    	
+    	$this->user_model_new->setValue(
+    		'hashed_password',
+    		password_hash($this->input->post('new_password'), PASSWORD_DEFAULT));
+    		
+    	if (! $this->user_model_new->updatePassword()) {
+    		$this->error(400, 'Password could not be updated');
+    	}
+    	
+        $data['new password'] = 'set';
+        $this->response($data);
+    }
+    
+    public function logout() {
+    }
+    
+    public function unsubscribe() {
+    }
+    
+    private function loadUser() {
+		$this->user_model_new->setValue('email', $this->input->post('email'));
+		$this->user_model_new->setValue('uuid', $this->input->post('uuid'));
+		
+		if (!$this->user_model_new->getUser()) {
+			log_message('error', $this->user_model_new->error['message']);
+			$this->error(401, 'Provided credentials could not be verified');
+		}
+    }
+    
+    private function login() {
+    	
+		// refresh token
+		$refresh_token = $this->generateToken();
+		$this->user_model_new->setValue('refresh_token', $refresh_token);
+		
+		if (!$this->user_model_new->insertOrUpdateToken()) {
+			$this->error(400, 'Error while creating refresh_token: '.$this->user_model->error['message']);
+		}
+
+		// save userid into session and send token
+		$this->session->userid = $this->user_model_new->getValue('id');
+		$data['refresh_token'] = $refresh_token;
+		$this->response($data);
+    }
+    
+    private function sendConfirmationMail($to) {
+    	$this->updateTempCode();
+    	$this->sendEmail(
+    		$to, 
+    		'Bestätigungsmail', 
+    		$this->getConfirmMailBody($this->user_model_new->getValue('temp_code')));
     }
     
     private function sendEmail($to, $subject, $msg) {
@@ -129,8 +280,41 @@ class Auth extends CI_Controller {
 		$this->email->send();
     }
     
+    private function updateTempCode() {
+    	$this->user_model_new->setValue('temp_code', $this->generateTempCode());
+    	$this->user_model_new->setValue('temp_code_valid_until', date('Y-m-d H:i:s', strtotime('+ 2 days')));
+    	
+        if (! $this->user_model_new->updateTempCode()) {
+        	$this->error(400, 'Something went wrong');
+        }
+    }
+    
     private function generateToken() {
-    	return bin2hex(random_bytes(64));
+    	return bin2hex(random_bytes(self::TOKEN_LENGTH));
+    }
+    
+    private function generateTempCode() {
+    	return bin2hex(random_bytes(self::TEMP_CODE_LENGTH));
+    }
+    
+    private function getConfirmMailBody($tempCode) {
+    	$href = "https://pingwinek.de/cookandbake/confirm_registration/temp_code/$tempCode";
+    	
+    	$mailBody = '<h1>Willkommen zu Cook and Bake</h1>';
+    	$mailBody .= '<div>Das ist eine Bestätigungsmail, um die Richtigkeit des Email-Accounts zu sichern.</div>';
+    	$mailBody .= "<div>Einfach <a href='$href'>hier bestätigen!</a></div>";
+    	$mailBody .= '<div>Wenn Sie keinen Account bei Cook and Bake angelegt haben, wenden Sie sich an XY.</div>';
+    	return $mailBody;
+    }
+    
+    private function getLostPasswordMailBody($tempCode) {
+    	$href = "https://pingwinek.de/cookandbake/lost_password/temp_code/$tempCode";
+    	
+    	$mailBody = '<h1>Neues Passwort für Cook and Bake</h1>';
+    	$mailBody .= '<div>Sie haben ein neues Passwort für Cook and Bake angefordert.</div>';
+    	$mailBody .= "<div>Einfach <a href='$href'>hier klicken</a>, um ein neues Passwort zu setzen!</div>";
+    	$mailBody .= '<div>Wenn Sie kein neues Passwort bei Cook and Bake angefordert haben, wenden Sie sich an XY.</div>';
+    	return $mailBody;
     }
     
     private function response($msg) {
