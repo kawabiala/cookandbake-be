@@ -6,7 +6,6 @@ class Auth extends CI_Controller {
         
         parent::__construct();
         $this->load->model('user_model');
-        $this->load->model('user_model_new');
         
         $this->load->library('email');
         $this->load->helper('form');
@@ -24,32 +23,56 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('password', 'Passwort', 'required');
         
         if ($this->form_validation->run() === FALSE) {
-        	$this->error(400, 'Provided credentials could not be validated (e.g. email address not valid)');
+        	$this->error(400, 'Validation error');
         }             
         
-        $this->user_model_new->setValue('email', $this->input->post('email'));
-        $this->user_model_new->setValue(
+        $this->user_model->setValue('email', $this->input->post('email'));
+        $this->user_model->setValue(
         	'hashed_password', 
-        	password_hash($this->input->post('email'), PASSWORD_DEFAULT));
-/*
-        $this->user_model_new->setValue(
-        	'temp_code', $this->generateTempCode());
-        $this->user_model_new->setValue(
-        	'temp_code_valid_until', date('Y-m-d H:i:s', strtotime('+ 2 days')));
-*/
-        	
-        if (! $this->user_model_new->newUser())  {
-			$this->error(400, 'Something went wrong, e.g. Email already exists');
+        	password_hash($this->input->post('password'), PASSWORD_DEFAULT));
+
+        if (! $this->user_model->newUser())  {
+			$this->error(409, 'Duplicate');
         }
-/*		
-		$this->sendEmail(
-			$this->input->post('email'), 
-			'Welcome', 
-			$this->getConfirmMailBody($this->user_model_new->getValue('temp_code')));
-*/
+
 		$this->sendConfirmationMail($this->input->post('email'));
 		$data['msg'] = $this->input->post('email') . ' registered.';
 		$this->response($data);
+    }
+    
+    // Confirms registration by handing in the temporary code
+    public function confirmRegistration() {
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('temp_code', 'Temporärer Code', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Validation error');
+        }
+        
+        $this->loadUser();
+        
+        if ($this->user_model->getValue('temp_code') != $this->input->post('temp_code')) {
+        	log_message('error', 'db: ' . $this->user_model->getValue('temp_code') . ' provided: ' . $this->input->post('temp_code'));
+        	$this->error(404, 'Verification error');
+        }
+        
+        if ($this->user_model->getValue('temp_code_valid_until') < date('Y-m-d H:i:s')) {
+        	$this->error(408, 'Code timed out');
+        }
+        
+        // if the email is confirmed, we don't care for correct or valid code
+        if ($this->user_model->getValue('confirmed') == 1) {
+			$data['confirmed'] = 'confirmed';
+			$this->response($data);
+        }
+        
+        $this->user_model->setValue('confirmed', 1);
+        if (! $this->user_model->updateConfirmed()) {
+        	$this->error(400, 'Confirmation error');
+        }
+        
+        $data['confirmed'] = 'confirmed';
+        $this->response($data);
     }
     
     // regular login with password
@@ -61,21 +84,18 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('uuid', 'UUID', 'required');
         
         if ($this->form_validation->run() === FALSE) {
-        	$this->error(400, 'Provided credentials could not be validated');
+        	$this->error(400, 'Validation error');
         }
         
         // load User
         $this->loadUser();
 			
         // verify password
-		if (!password_verify(
-			$this->input->post('password'),
-			$this->user_model_new->getValue('hashed_password'))) 
-		{
-			$this->error(401, 'Provided credentials could not be verified');
+		if (! $this->verify_password()) {
+			$this->error(404, 'Verification error');
 		}
 		
-    	if ($this->user_model_new->getValue('confirmed') == 0) {
+    	if ($this->user_model->getValue('confirmed') == 0) {
     		$this->sendConfirmationMail($this->input->post('email'));
     		$this->error(206, 'Please confirm the account');
     	}		
@@ -90,50 +110,22 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('uuid', 'UUID', 'required');
         
         if ($this->form_validation->run() === FALSE) {
-        	$this->error(400, 'Provided token could not be validated');
+        	$this->error(400, 'Validation error');
         }
         
         $this->loadUser();
         
         // verify token
-        if ($this->user_model_new->getValue('refresh_token') != $this->input->post('refresh_token')) {
-        	log_message('debug', 'token provided: ' . $this->input->post('refresh_token') . ' local: ' . $this->user_model_new->getValue('refresh_token'));
-        	$this->error(401, 'Provided token could not be verified');
+        if ($this->user_model->getValue('refresh_token') != $this->input->post('refresh_token')) {
+        	log_message('debug', 'token provided: ' . $this->input->post('refresh_token') . ' local: ' . $this->user_model->getValue('refresh_token'));
+        	$this->error(404, 'Verification error');
         }
         
-    	if ($this->user_model_new->getValue('confirmed') == 0) {
+    	if ($this->user_model->getValue('confirmed') == 0) {
     		$this->error(206, 'Please confirm the account');
     	}
         
         $this->login();
-    }
-    
-    // Confirms registration by handing in the temporary code
-    public function confirmRegistration() {
-        $this->form_validation->set_rules('email', 'Email', 'required');
-        $this->form_validation->set_rules('temp_code', 'Temporärer Code', 'required');
-
-        if ($this->form_validation->run() === FALSE) {
-        	$this->error(400, 'Provided email or code could not be validated');
-        }
-        
-        $this->loadUser();
-        
-        if ($this->user_model_new->getValue('temp_code') != $this->input->post('temp_code')) {
-        	$this->error(400, 'Provided email or code could not be verified');
-        }
-        
-        if ($this->user_model_new->getValue('temp_code_valid_until') < date('Y-m-d H:i:s')) {
-        	$this->error(402, 'Provided code not valid anymore');
-        }
-        
-        $this->user_model_new->setValue('confirmed', 1);
-        if (! $this->user_model_new->updateConfirmed()) {
-        	$this->error(400, 'Error wail confirming');
-        }
-        
-        $data['confirmed'] = 'confirmed';
-        $this->response($data);
     }
     
     // Indicates, that a new password is needed
@@ -142,24 +134,24 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('email', 'Email', 'required');
 
         if ($this->form_validation->run() === FALSE) {
-        	$this->error(400, 'Provided email could not be validated');
+        	$this->error(400, 'Validation error');
         }
         
         $this->loadUser();
         
-        $this->user_model_new->setValue(
+        $this->user_model->setValue(
         	'temp_code', $this->generateTempCode());
-        $this->user_model_new->setValue(
+        $this->user_model->setValue(
         	'temp_code_valid_until', date('Y-m-d H:i:s', strtotime('+ 2 days')));
         	
-        if (! $this->user_model_new->updateTempCode()) {
+        if (! $this->user_model->updateTempCode()) {
         	$this->error(400, 'Something went wrong');
         }
 
 		$this->sendEmail(
 			$this->input->post('email'), 
 			'Set New Password', 
-			$this->getLostPasswordMailBody($this->user_model_new->getValue('temp_code')));
+			$this->getLostPasswordMailBody($this->user_model->getValue('temp_code')));
 		$data['msg'] = 'New password mail for ' . $this->input->post('email') . ' sent.';
 		$this->response($data);
     }
@@ -171,24 +163,24 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('password', 'Passwort', 'required');
         
         if ($this->form_validation->run() === FALSE) {
-        	$this->error(400, 'Provided email or code could not be validated');
+        	$this->error(400, 'Validation error');
         }
         
         $this->loadUser();
         
-        if ($this->user_model_new->getValue('temp_code') != $this->input->post('temp_code')) {
-        	$this->error(400, 'Provided email or code could not be verified');
+        if ($this->user_model->getValue('temp_code') != $this->input->post('temp_code')) {
+        	$this->error(404, 'Verification error');
         }
         
-        if ($this->user_model_new->getValue('temp_code_valid_until') < date('Y-m-d H:i:s')) {
-        	$this->error(402, 'Provided code not valid anymore');
+        if ($this->user_model->getValue('temp_code_valid_until') < date('Y-m-d H:i:s')) {
+        	$this->error(408, 'Provided code not valid anymore');
         }
         
-        $this->user_model_new->setValue(
+        $this->user_model->setValue(
         	'hashed_password',
         	password_hash($this->input->post('password'), PASSWORD_DEFAULT));
         	
-        if (! $this->user_model_new->updatePassword()) {
+        if (! $this->user_model->updatePassword()) {
         	$this->error(400, 'Error wail updating password');
         }
         
@@ -199,31 +191,33 @@ class Auth extends CI_Controller {
     // authenticate with email and password and set new password
     public function changePassword() {
         $this->form_validation->set_rules('email', 'Email', 'required');
-        $this->form_validation->set_rules('old_password', 'Altes Passwort', 'required');
+        $this->form_validation->set_rules('password', 'Altes Passwort', 'required');
         $this->form_validation->set_rules('new_password', 'Neues Passwort', 'required');
 
         if ($this->form_validation->run() === FALSE) {
-        	$this->error(400, 'Provided email or code could not be validated');
+        	$this->error(400, 'Validation error');
         }
         
         $this->loadUser();
         
 		if (!password_verify(
-			$this->input->post('old_password'),
-			$this->user_model_new->getValue('hashed_password'))) 
+			$this->input->post('password'),
+			$this->user_model->getValue('hashed_password'))) 
 		{
-			$this->error(401, 'Provided credentials could not be verified');
+			$this->error(404, 'Verification error');
 		}
 		
-    	if ($this->user_model_new->getValue('confirmed') == 0) {
+		/*
+    	if ($this->user_model->getValue('confirmed') == 0) {
     		$this->error(402, 'Account not confirmed');
     	}
+    	*/
     	
-    	$this->user_model_new->setValue(
+    	$this->user_model->setValue(
     		'hashed_password',
     		password_hash($this->input->post('new_password'), PASSWORD_DEFAULT));
     		
-    	if (! $this->user_model_new->updatePassword()) {
+    	if (! $this->user_model->updatePassword()) {
     		$this->error(400, 'Password could not be updated');
     	}
     	
@@ -232,35 +226,94 @@ class Auth extends CI_Controller {
     }
     
     public function logout() {
-    }
+        
+        // validate input
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Validation error');
+        }
+        
+        $this->loadUser();
+        
+        $this->user_model->deleteRefreshToken();
+        $this->doLogout();
+        
+        $data['Logout'] = 'OK';
+        $this->response($data);
+}
     
     public function unsubscribe() {
+        
+        // validate input
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('password', 'Passwort', 'required');
+        
+        if ($this->form_validation->run() === FALSE) {
+        	$this->error(400, 'Validation error');
+        }
+        
+        $this->loadUser();
+        
+        // verify
+        if (! $this->verify_password()) {
+        	$this->error(404, 'Verification error');
+        }
+        
+        // delete
+        $this->user_model->deleteRefreshTokens();
+        $this->user_model->deleteUser();
+        $this->doLogout();
+        
+        $data['Unsubscribe'] = 'OK';
+        $this->response($data);
     }
     
     private function loadUser() {
-		$this->user_model_new->setValue('email', $this->input->post('email'));
-		$this->user_model_new->setValue('uuid', $this->input->post('uuid'));
+		$this->user_model->setValue('email', $this->input->post('email'));
+		$this->user_model->setValue('uuid', $this->input->post('uuid'));
 		
-		if (!$this->user_model_new->getUser()) {
-			log_message('error', $this->user_model_new->error['message']);
-			$this->error(401, 'Provided credentials could not be verified');
+		if (!$this->user_model->getUser()) {
+			log_message('error', $this->user_model->error['message']);
+			$this->error(404, 'Verification error');
 		}
     }
     
+    private function verify_password() {
+    	return password_verify(
+			$this->input->post('password'),
+			$this->user_model->getValue('hashed_password'));
+    }
+     
     private function login() {
     	
 		// refresh token
 		$refresh_token = $this->generateToken();
-		$this->user_model_new->setValue('refresh_token', $refresh_token);
+		$this->user_model->setValue('refresh_token', $refresh_token);
 		
-		if (!$this->user_model_new->insertOrUpdateToken()) {
-			$this->error(400, 'Error while creating refresh_token: '.$this->user_model->error['message']);
+		/*
+		If logging in from a new device for the first time, loadUser will set uuid to null,
+		as there is no entry for the uuid in the db.
+		*/
+		if ($this->user_model->getValue('uuid') == null) {
+			$this->user_model->setValue('uuid', $this->input->post('uuid'));
+			if (! $this->user_model->insertToken()) {
+				$this->error(400, 'Error while creating token');
+			}
+		} else {
+			if (! $this->user_model->updateToken()) {
+				$this->error(400, 'Error while creating token');
+			}
 		}
 
 		// save userid into session and send token
-		$this->session->userid = $this->user_model_new->getValue('id');
+		$this->session->userid = $this->user_model->getValue('id');
 		$data['refresh_token'] = $refresh_token;
 		$this->response($data);
+    }
+    
+    private function doLogout() {
+    	$this->session->unset_userdata['userid'];
     }
     
     private function sendConfirmationMail($to) {
@@ -268,7 +321,7 @@ class Auth extends CI_Controller {
     	$this->sendEmail(
     		$to, 
     		'Bestätigungsmail', 
-    		$this->getConfirmMailBody($this->user_model_new->getValue('temp_code')));
+    		$this->getConfirmMailBody($this->user_model->getValue('temp_code')));
     }
     
     private function sendEmail($to, $subject, $msg) {
@@ -281,10 +334,10 @@ class Auth extends CI_Controller {
     }
     
     private function updateTempCode() {
-    	$this->user_model_new->setValue('temp_code', $this->generateTempCode());
-    	$this->user_model_new->setValue('temp_code_valid_until', date('Y-m-d H:i:s', strtotime('+ 2 days')));
+    	$this->user_model->setValue('temp_code', $this->generateTempCode());
+    	$this->user_model->setValue('temp_code_valid_until', date('Y-m-d H:i:s', strtotime('+ 2 days')));
     	
-        if (! $this->user_model_new->updateTempCode()) {
+        if (! $this->user_model->updateTempCode()) {
         	$this->error(400, 'Something went wrong');
         }
     }

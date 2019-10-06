@@ -1,0 +1,580 @@
+{
+	"info": {
+		"_postman_id": "230cc77c-c623-4e75-8221-0181c0c625b6",
+		"name": "Cookandbake Local - Happy Case (manual)",
+		"description": "At least the temp_code needs to be pasted manually.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Successful register\", function() {",
+							"    pm.response.to.have. status(201);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/register",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "89d78e36-3efd-4167-887b-2dff910452d5",
+						"exec": [
+							"pm.test(\"Succesful confirmation\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "2d8a208d4781918eafd973fdcf02b2ea",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/confirm_registration",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"confirm_registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0bc7cbdf-fa7e-414c-bdc4-b118ec259f37",
+						"exec": [
+							"pm.test(\"Successful login\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Succesful refresh\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "d9c7b678fc0a323342c339ad02583474a96ce74b6c66c3523244f6b31412d81671ade528c0fc479b0a4be2c70340f7d60f95543509315379af58978ab56cd376",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/refresh",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lost Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Succesful lost password request\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/lost_password",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"lost_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Successful new password\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test1",
+							"type": "text"
+						},
+						{
+							"key": "temp_code",
+							"value": "9f649962db5c88ad6a8cf6c1b99d23d0",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/new_password?",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"new_password"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "test.nonexistent@pingwinek.de",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "hauptsacheValidierungGelingt",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Succesful password change\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test1",
+							"type": "text"
+						},
+						{
+							"key": "new_password",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/change_password",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"change_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Successful logout\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/logout",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unsubscribe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Succesful unsubscribe\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.happy.case@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/unsubscribe",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"unsubscribe"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

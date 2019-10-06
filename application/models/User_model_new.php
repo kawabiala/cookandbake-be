@@ -38,10 +38,8 @@ class User_model_new extends CI_Model {
 			'temp_code_valid_until' => $this->user['temp_code_valid_until']
 		);
 		$result = $this->db->insert($this->user_table, $data);
-		if ($result == false) {
-			$this->error = $this->db->error();
-		}
-		return $result;
+
+		return $this->evaluateResult($result);
 	}
 	
 	public function getUser() {
@@ -54,23 +52,21 @@ class User_model_new extends CI_Model {
 			'left outer');
 		
 		$result = $this->db->get();
-		
-		if ($result == false) {
-			$this->error = $this->db->error();
-			return false;
-		} else {
+
+		$return_val = $this->evaluateResult($result);
+		if ($return_val) {
 			$this->fillInUser($result);
-			return true;
 		}
+		return $return_val;
 	}
 	
 	public function updateTempCode() {
-		$this->db->where('id', $this->user['id']);
+		$this->db->where('email', $this->user['email']);
 		$data = array(
 			'temp_code' => $this->user['temp_code'],
 			'temp_code_valid_until' => $this->user['temp_code_valid_until']
 		);
-		return $this->db->update($this->user_table, $data);
+		return $this->evaluateResult($this->db->update($this->user_table, $data));
 	}
 	
 	public function updateConfirmed() {
@@ -78,7 +74,7 @@ class User_model_new extends CI_Model {
 		$data = array(
 			'confirmed' => $this->user['confirmed']
 		);
-		return $this->db->update($this->user_table, $data);
+		return $this->evaluateResult($this->db->update($this->user_table, $data));
 	}
 	
 	public function updatePassword() {
@@ -86,36 +82,64 @@ class User_model_new extends CI_Model {
 		$data = array(
 			'password' => $this->user['hashed_password']
 		);
-		return $this->db->update($this->user_table, $data);
+		return $this->evaluateResult($this->db->update($this->user_table, $data));
 	}
-	
-	public function insertOrUpdateToken() {
-		$token = $this->user['refresh_token'];
-		$uuid = $this->user['uuid'];
-		$user_id = $this->user['id'];
-		
-		if ($this->insertToken($user_id, $uuid, $token)) {
-			return true;
-		} else {
-			return $this->updateToken($user_id, $uuid, $token);
-		}
-	}
-	
-	private function insertToken($user_id, $uuid, $token) {
+
+	public function insertToken() {
 		$data = array(
-			'refresh_token' => $token,
-			'uuid' => $uuid,
-			'user_id' => $user_id
+			'refresh_token' => $this->user['refresh_token'],
+			'uuid' => $this->user['uuid'],
+			'user_id' => $this->user['id']
 		);
-		return $this->db->insert($this->token_table, $data);
+		
+		$result = $this->db->insert($this->token_table, $data);
+
+		return $this->evaluateResult($result);
 	}
 	
-	private function updateToken($user_id, $uuid, $token) {
-		$data = array('refresh_token' => $token);
-		$this->db->where('uuid', $uuid);
-		$this->db->where('user_id', $user_id);
+	public function updateToken(	) {
+		$data = array(
+			'refresh_token' => $this->user['refresh_token']
+		);
+		$this->db->where('uuid', $this->user['uuid']);
+		$this->db->where('user_id', $this->user['id']);
+		
 		$result = $this->db->update($this->token_table, $data);
-		return ($result == false || $result = 0) ? false : true;
+
+		return $this->evaluateResult($result);
+	}
+
+	// all tokens for given user
+	public function deleteRefreshTokens() {
+		$data = array(
+			'user_id' => $this->user['id']
+		);
+		
+		$result = $this->db->delete($this->token_table, $data);
+		
+		return $result == false ? false : true;
+	}
+	
+	// token for given uuid and user
+	public function deleteRefreshToken() {
+		$data = array(
+			'user_id' => $this->user['id'],
+			'uuid' => $this->user['uuid']
+		);
+		
+		$result = $this->db->delete($this->token_table, $data);
+		
+		return $result == false ? false : true;
+	}
+	
+	public function deleteUser() {
+		$data = array(
+			'id' => $this->user['id']
+		);
+		
+		$result = $this->db->delete($this->user_table, $data);
+		
+		return $result == false ? false : true;
 	}
 	
 	private function fillInUser($result) {
@@ -128,5 +152,26 @@ class User_model_new extends CI_Model {
 		$this->user['confirmed'] = isset($row->confirmed) ? $row->confirmed : 0;
 		$this->user['uuid'] = isset($row->uuid) ? $row->uuid : null;
 		$this->user['refresh_token'] = isset($row->refresh_token) ? $row->refresh_token : null;
+	}
+	
+	private function evaluateResult($result) {
+		if ($result == false) {
+			$this->error = $this->db->error();
+			return false;
+		}
+
+		if (method_exists($result, 'num_rows') && $result->num_rows() == 0) {
+			return false;
+		}
+		
+		if (is_int($result) && $result == 0) {
+			return false;
+		}
+		
+		if ($this->db->affected_rows() == 0) {
+			return false;
+		}
+		
+		return true;
 	}
 }

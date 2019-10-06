@@ -1,0 +1,1712 @@
+{
+	"info": {
+		"_postman_id": "3a1c47e7-5d83-41c3-8ec9-46a79b90e890",
+		"name": "Cookandbake Local",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register - no parameter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing validation due to no parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/register",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register - duplicate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Duplicate email\", function() {",
+							"    pm.response.to.have.status(409);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.duplicate@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/register",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Registration - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb5b2114-102a-4bdc-80a9-c7f649f096f8",
+						"exec": [
+							"pm.test(\"Failing validation due to missing params\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "6015efa9edcf41af0eeaac7a19d0dd78",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/confirm_registration",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"confirm_registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Registration - unknown email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb5b2114-102a-4bdc-80a9-c7f649f096f8",
+						"exec": [
+							"pm.test(\"Failing verification due to non existing email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "test.nonexisting@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "failingcode",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/confirm_registration",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"confirm_registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Registration - wrong code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb5b2114-102a-4bdc-80a9-c7f649f096f8",
+						"exec": [
+							"pm.test(\"Failing verification due to wrong code\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "test.duplicate@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "failingcode",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/confirm_registration",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"confirm_registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Registration - code timed out",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb5b2114-102a-4bdc-80a9-c7f649f096f8",
+						"exec": [
+							"pm.test(\"Failing verification due to validation period elapsed\", function() {",
+							"    pm.response.to.have.status(408);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "test.unconfirmed@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "15efb6b8cba573c0c7f9ca4448331dcb",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/confirm_registration",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"confirm_registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0bc7cbdf-fa7e-414c-bdc4-b118ec259f37",
+						"exec": [
+							"pm.test(\"Failing validation due to missing parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login - unknown email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0bc7cbdf-fa7e-414c-bdc4-b118ec259f37",
+						"exec": [
+							"pm.test(\"Failing verification due to non existing email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.nonexisting@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login - wrong password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0bc7cbdf-fa7e-414c-bdc4-b118ec259f37",
+						"exec": [
+							"pm.test(\"Failing verification due to wrong password\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.duplicate@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "failpass",
+							"type": "text"
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login - unconfirmed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0bc7cbdf-fa7e-414c-bdc4-b118ec259f37",
+						"exec": [
+							"pm.test(\"Missing confirmation\", function() {",
+							"    pm.response.to.have.status(206);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.unconfirmed2@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing validation due to no parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/refresh",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh - wrong uuid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to non existing uuid\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.duplicate@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "uuid",
+							"value": "postman-failing-test",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "not provided",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/refresh",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh - wrong refresh code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to wrong token\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.duplicate@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "uuid",
+							"value": "postman-1",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "wrong token",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/refresh",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lost Password - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing validation due to no parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/lost_password",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"lost_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lost Password - unknown email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to non existent email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.nonexistent@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/lost_password",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"lost_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Password - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing validation due to no parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/refresh",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Password - unknown email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to unknown email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.nonexistent@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "temp_code",
+							"value": "HauptsacheValidierungGelingt",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/new_password?",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"new_password"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "test.nonexistent@pingwinek.de",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "hauptsacheValidierungGelingt",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Password - wrong tempcode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to wrong code\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.duplicate@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "temp_code",
+							"value": "failcode",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/new_password?",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"new_password"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "test.nonexistent@pingwinek.de",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "hauptsacheValidierungGelingt",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Password - code timed out",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to code timed out\", function() {",
+							"    pm.response.to.have.status(408);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.unconfirmed@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "temp_code",
+							"value": "15efb6b8cba573c0c7f9ca4448331dcb",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/new_password?",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"new_password"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "test.nonexistent@pingwinek.de",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "temp_code",
+							"value": "hauptsacheValidierungGelingt",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing validation due to no parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/refresh",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password - unknown email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to non existent email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.nonexistent@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "new_password",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/change_password",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"change_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password - wrong password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to wrong password\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.duplicate@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "failpass",
+							"type": "text"
+						},
+						{
+							"key": "new_password",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/change_password",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"change_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing validation due to no parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/logout",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout - unknown email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to non existing email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.nonexisting@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/logout",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unsubscribe - no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing validation due to no parameters\", function() {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "jens.reufsteck@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/unsubscribe",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"unsubscribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unsubscribe - unknown email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to non existing email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.nonexisting@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/unsubscribe",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"unsubscribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unsubscribe - wrong password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cd0684e-469a-46f9-af6b-b07ea36d873d",
+						"exec": [
+							"pm.test(\"Failing verification due to non existing email\", function() {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test.duplicate@pingwinek.de",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "failpass",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/strato/pingwinek/cookandbake/auth/unsubscribe",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"strato",
+						"pingwinek",
+						"cookandbake",
+						"auth",
+						"unsubscribe"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
