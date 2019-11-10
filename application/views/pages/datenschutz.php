@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Datenschutzerklärung</title>
+        <link rel="stylesheet" href="resources/cookandbake.css"/>
     </head>
     <body>
         <h1>Datenschutzerklärung</h1>

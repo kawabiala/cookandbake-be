@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Impressum</title>
+        <link rel="stylesheet" href="resources/cookandbake.css"/>
     </head>
     <body>
         <h1>Impressum</h1>
