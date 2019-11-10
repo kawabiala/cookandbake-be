@@ -21,10 +21,17 @@ class Auth extends CI_Controller {
         
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('password', 'Passwort', 'required');
+        $this->form_validation->set_rules('dataprotection', 'Datenschutz', 'required');
         
         if ($this->form_validation->run() === FALSE) {
         	$this->error(400, 'Validation error');
-        }             
+        }
+        
+        if (strtolower($this->input->post('dataprotection')) == 'true') {
+        	// TODO: save acceptance or acceptance date to db, i.e. hand over to model
+        } else {
+        	$this->error(404, 'Dataprotection error');
+        }         
         
         $this->user_model->setValue('email', $this->input->post('email'));
         $this->user_model->setValue(
@@ -37,7 +44,7 @@ class Auth extends CI_Controller {
 
 		$this->sendConfirmationMail($this->input->post('email'));
 		$data['msg'] = $this->input->post('email') . ' registered.';
-		$this->response($data);
+		$this->responseWithCode(201, $data);
     }
     
     // Confirms registration by handing in the temporary code
@@ -370,12 +377,16 @@ class Auth extends CI_Controller {
     	return $mailBody;
     }
     
-    private function response($msg) {
+    private function responseWithCode($code, $msg) {
         if (is_array($msg)) {
-            $this->send_response(200, $msg);
+            $this->send_response($code, $msg);
         } else {
             $this->error(400, 'Malformed response body: ' + $msg);
         }
+    }
+    
+    private function response($msg) {
+        $this->responseWithCode(200, $msg);
     }
     
     private function error($code, $msg) {
