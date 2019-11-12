@@ -10,7 +10,7 @@
         
         <h3>Benennung der verantwortlichen Stelle</h3>
 
-        <p>Die verantwortliche Stelle für die Datenverarbeitung in dieser App ist:</p>
+        <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
         <p>Jens Reufsteck<br>
             Habsburgerallee 95<br>
             60385 Frankfurt
@@ -33,12 +33,12 @@
         <p>Sie haben jederzeit im Rahmen der geltenden gesetzlichen Bestimmungen das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, Herkunft der Daten, deren Empfänger und den Zweck der Datenverarbeitung und ggf. ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten. Diesbezüglich und auch zu weiteren Fragen zum Thema personenbezogene Daten können Sie sich jederzeit über die im Impressum aufgeführten Kontaktmöglichkeiten an mich wenden.</p>
 
         <h2>SSL- bzw. TLS-Verschlüsselung</h2>
-        <p>Aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, die Sie an mich als Seitenbetreiber senden, nutzt diese App eine SSL-bzw. TLS-Verschlüsselung. Damit sind Daten, die Sie über diese App übermitteln, für Dritte nicht mitlesbar.</p>
+        <p>Aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, die Sie an uns als Seitenbetreiber senden, nutzt unsere Website eine SSL-bzw. TLS-Verschlüsselung. Damit sind Daten, die Sie über diese Website übermitteln, für Dritte nicht mitlesbar. Sie erkennen eine verschlüsselte Verbindung an der „https://“ Adresszeile Ihres Browsers und am Schloss-Symbol in der Browserzeile.</p>
 
         <h2>Server-Log-Dateien</h2>
-        <p>In Server-Log-Dateien erhebt und speichert der Provider des API-Backends automatisch Informationen, welche die App automatisch an uns übermittelt. Dies sind:</p>
+        <p>In Server-Log-Dateien erhebt und speichert der Provider der Website automatisch Informationen, die Ihr Browser automatisch an uns übermittelt. Dies sind:</p>
         <ul>
-            <li>API-Request auf unserer Domain</li>
+            <li>Besuchte Seite auf unserer Domain</li>
             <li>Datum und Uhrzeit der Serveranfrage</li>
             <li>Browsertyp und Browserversion</li>
             <li>Verwendetes Betriebssystem</li>
@@ -47,13 +47,14 @@
         </ul>
         <p>Die IP-Adresse wird vom Provider anonymisiert (Anonymisierung der ersten neun Bit der IP-Adresse).</p>
         <p>Es findet keine Zusammenführung dieser Daten mit anderen Datenquellen statt. Grundlage der Datenverarbeitung bildet Art. 6 Abs. 1 lit. b DSGVO, der die Verarbeitung von Daten zur Erfüllung eines Vertrags oder vorvertraglicher Maßnahmen gestattet.</p>
-            
-        <h2>Registrierung in der App</h2>
-        <p>Zur Nutzung bestimmter Funktionen können Sie sich in der App registrieren. Die übermittelten Daten dienen ausschließlich zum Zwecke der Nutzung des jeweiligen Angebotes oder Dienstes. Bei der Registrierung abgefragte Pflichtangaben sind vollständig anzugeben. Andernfalls ist die Registrierung nicht möglich.</p>
-        <p>Zur dauerhaften Anmeldung über Sessions hinweg ("Remember Me") speichert die App einen Token, der vom Server erstellt und mit Ihren Daten verknüpft wird. Sie können sich in der App jederzeit abmelden und damit diesen Token löschen.</p>
-        <p>Im Falle wichtiger Änderungen, etwa aus technischen Gründen, informiere ich Sie per E-Mail. Die E-Mail wird an die Adresse versendet, die bei der Registrierung angegeben wurde.</p>
+
+<!--            
+        <h2>Registrierung auf der Website</h2>
+        <p>Zur Nutzung bestimmter Funktionen können Sie sich auf der Website registrieren. Die übermittelten Daten dienen ausschließlich zum Zwecke der Nutzung des jeweiligen Angebotes oder Dienstes. Bei der Registrierung abgefragte Pflichtangaben sind vollständig anzugeben. Andernfalls werden wir die Registrierung ablehnen.</p>
+        <p>Im Falle wichtiger Änderungen, etwa aus technischen Gründen, informieren wir Sie per E-Mail. Die E-Mail wird an die Adresse versendet, die bei der Registrierung angegeben wurde.</p>
         <p>Die Verarbeitung der bei der Registrierung eingegebenen Daten erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Ein Widerruf Ihrer bereits erteilten Einwilligung ist jederzeit möglich. Für den Widerruf genügt eine formlose Mitteilung per E-Mail. Die Rechtmäßigkeit der bereits erfolgten Datenverarbeitung bleibt vom Widerruf unberührt.</p>
-        <p>Die bei der Registrierung erfassten Daten bleiben gespeichert während des Zeitraums, den Sie in unserer App registriert sind. Ihre Daten werden gelöscht, sollten Sie Ihre Registrierung aufheben. Gesetzliche Aufbewahrungsfristen bleiben unberührt.</p>
+        <p>Wir speichern die bei der Registrierung erfassten Daten während des Zeitraums, den Sie in unserer App registriert sind. Ihren Daten werden gelöscht, sollten Sie Ihre Registrierung aufheben. Gesetzliche Aufbewahrungsfristen bleiben unberührt.</p>
+-->
 
 <!--            
         <h2>Kontaktformular</h2>
@@ -62,12 +63,14 @@
         <p>Über das Kontaktformular übermittelte Daten verbleiben bei uns, bis Sie uns zur Löschung auffordern, Ihre Einwilligung zur Speicherung widerrufen oder keine Notwendigkeit der Datenspeicherung mehr besteht. Zwingende gesetzliche Bestimmungen - insbesondere Aufbewahrungsfristen - bleiben unberührt.</p>
 -->
     
+<!--        
         <h2>Speicherdauer von Beiträgen und Kommentaren</h2>
-        <p>Beiträge und Kommentare sowie damit in Verbindung stehende Daten, wie beispielsweise IP-Adressen, werden gespeichert. Der Inhalt verbleibt auf unseren Servern, bis er vollständig gelöscht wurde oder aus rechtlichen Gründen gelöscht werden musste.</p>
+        <p>Beiträge und Kommentare sowie damit in Verbindung stehende Daten, wie beispielsweise IP-Adressen, werden gespeichert. Der Inhalt verbleibt auf unserer Website, bis er vollständig gelöscht wurde oder aus rechtlichen Gründen gelöscht werden musste.</p>
         <p>Die Speicherung der Beiträge und Kommentare erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Ein Widerruf Ihrer bereits erteilten Einwilligung ist jederzeit möglich. Für den Widerruf genügt eine formlose Mitteilung per E-Mail. Die Rechtmäßigkeit bereits erfolgter Datenverarbeitungsvorgänge bleibt vom Widerruf unberührt.</p>
+-->
         
         <h2>Cookies</h2>
-        <p>Die App verwendet Cookies ausschließlich als “Session-Cookies.” Diese Cookies werden mit Beendigung der App von selbst gelöscht.</p>
+        <p>Unser Angebot verwendet Cookies ausschließlich als “Session-Cookies.” Solche Cookies werden nach Ende Ihrer Browser-Sitzung von selbst gelöscht.</p>
         <p>Das Setzen von Cookies, die zur Ausübung elektronischer Kommunikationsvorgänge oder der Bereitstellung bestimmter, von Ihnen erwünschter Funktionen notwendig sind, erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Als Betreiber dieser Website haben wir ein berechtigtes Interesse an der Speicherung von Cookies zur technisch fehlerfreien und reibungslosen Bereitstellung unserer Dienste.</p>
         
 <!--            
