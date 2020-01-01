@@ -28,14 +28,14 @@ class Ingredient extends CI_Controller {
         log_message('debug', 'Ingredient.insert: '.json_encode($this->input->input_stream));
             
         if ($this->validate(FALSE)) {
-            $this->ingredient_model->set_value('recipe_id', $this->input->input_stream('recipeId'));
+            $this->ingredient_model->set_value('recipe_id', $this->input->input_stream('recipe_id'));
             $this->ingredient_model->set_value('name', $this->input->input_stream('name'));
             if ($this->input->input_stream('quantity') != null) {
 	            $this->ingredient_model->set_value('quantity', $this->input->input_stream('quantity'));
 	        }
             $this->ingredient_model->set_value('unity', $this->input->input_stream('unity'));
         } else {
-            $this->error(400, 'Data could not be inserted due to validation error');
+            $this->error(400, 'Data could not be inserted due to validation error'.validation_errors());
         }
         
         if ($this->ingredient_model->insert()) {
@@ -56,12 +56,12 @@ class Ingredient extends CI_Controller {
             
         if ($this->validate(TRUE)) {
             $this->ingredient_model->set_value('id', $this->input->post('id'));
-            $this->ingredient_model->set_value('recipe_id', $this->input->post('recipeId'));
+            $this->ingredient_model->set_value('recipe_id', $this->input->post('recipe_id'));
             $this->ingredient_model->set_value('name', $this->input->post('name'));
             $this->ingredient_model->set_value('quantity', $this->input->post('quantity'));
             $this->ingredient_model->set_value('unity', $this->input->post('unity'));
         } else {
-            $this->error(400, 'Data could not be updated due to validation error');
+            $this->error(400, 'Data could not be updated due to validation error'.validation_errors());
         }
         
         if ($this->ingredient_model->update()) {
@@ -110,7 +110,7 @@ class Ingredient extends CI_Controller {
             $this->form_validation->set_data($this->input->input_stream());    
         }
         
-        $this->form_validation->set_rules('recipeId', 'RezeptID', 'required');
+        $this->form_validation->set_rules('recipe_id', 'RezeptID', 'required');
         $this->form_validation->set_rules('name', 'Zutat', 'required');
         if ($isUpdate) {
             $this->form_validation->set_rules('id', 'ID', 'required');
