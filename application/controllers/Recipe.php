@@ -71,8 +71,20 @@ class Recipe extends CI_Controller {
     
     public function delete($id = -1) {
         $this->authorize();
-        $this->error(400, 'not implemented');
-
+        
+        log_message('debug', 'Recipe.delete: '.$id);
+        
+        $this->recipe_model->set_value('id', $id);
+        
+        if ($this->recipe_model->delete()) {
+        	$this->send_response(200, 'Resource deleted');
+        } else {
+            if (is_array($this->recipe_model->error)) {
+                $this->error(400, $this->recipe_model->error['code'] . ': ' . $this->recipe_model->error['message']);
+            } else {
+                $this->error(400, 'undefined database error');
+            }
+		}
     }
     
     private function authorize() {

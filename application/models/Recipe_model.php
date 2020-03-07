@@ -78,7 +78,13 @@ class Recipe_model extends CI_Model {
     }
     
     public function delete() {
-        
+        $this->db->where('id', $this->recipe['id']);
+        if ($this->db->delete($this->table_name)) {
+        	return true;
+        } else {
+            $this->error = $this->db->error();
+        	return false;
+        }
     }
     
     public function verify($email, $password) {
