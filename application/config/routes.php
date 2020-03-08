@@ -62,7 +62,7 @@ $route['api/recipe/put'] = 'recipe/insert';
 $route['api/recipe']['PUT'] = 'recipe/insert';
 $route['api/recipe']['POST'] = 'recipe/update';
 $route['api/recipe/(:num)']['DELETE'] = 'recipe/delete/$1';
-$route['api/recipe/(:num)'] = 'recipe/get/$1';
+$route['api/recipe/(:num)']['GET'] = 'recipe/get/$1';
 $route['api/recipe']['GET'] = 'recipe/get_all';
 
 $route['api/ingredient']['PUT'] = 'ingredient/insert';
