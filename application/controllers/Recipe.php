@@ -29,6 +29,7 @@ class Recipe extends CI_Controller {
             $this->recipe_model->set_value('title', $this->input->input_stream('title'));
             $this->recipe_model->set_value('description', $this->input->input_stream('description'));
             $this->recipe_model->set_value('instruction', $this->input->input_stream('instruction'));
+            $this->recipe_model->set_value('last_modified', $this->input->input_stream('last_modified'));
         } else {
             $this->error(400, 'Data could not be inserted due to validation error');
         }
@@ -54,6 +55,7 @@ class Recipe extends CI_Controller {
             $this->recipe_model->set_value('title', $this->input->post('title'));
             $this->recipe_model->set_value('description', $this->input->post('description'));
             $this->recipe_model->set_value('instruction', $this->input->post('instruction'));
+            $this->recipe_model->set_value('last_modified', $this->input->post('last_modified'));
         } else {
             $this->error(400, 'Data could not be updated due to validation error');
         }

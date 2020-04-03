@@ -7,7 +7,8 @@ class Recipe_model extends CI_Model {
         'user_id' => -1,
         'title' => '',
         'description' => null,
-        'instruction' => null
+        'instruction' => null,
+        'last_modified' => 0
     );
     
     private $table_name = 'recipe';
@@ -31,7 +32,7 @@ class Recipe_model extends CI_Model {
     }
     
     public function get() {
-        $this->db->select('id, title, description, instruction');
+        $this->db->select('id, title, description, instruction, last_modified');
         $this->db->where('user_id', $this->recipe['user_id']);
         if ($this->recipe['id'] >= 0) {
             $this->db->where('id', $this->recipe['id']);
@@ -47,7 +48,8 @@ class Recipe_model extends CI_Model {
             'user_id' => $this->recipe['user_id'],
             'title' => $this->recipe['title'],
             'description' => $this->recipe['description'],
-            'instruction' => $this->recipe['instruction']
+            'instruction' => $this->recipe['instruction'],
+            'last_modified' => $this->recipe['last_modified']
         );
         
         if ($this->db->insert($this->table_name, $data)) {
@@ -63,7 +65,8 @@ class Recipe_model extends CI_Model {
         $data = array(
             'title' => $this->recipe['title'],
             'description' => $this->recipe['description'],
-            'instruction' => $this->recipe['instruction']
+            'instruction' => $this->recipe['instruction'],
+            'last_modified' => $this->recipe['last_modified']
         );
         
         $this->db->where('id', $this->recipe['id']);

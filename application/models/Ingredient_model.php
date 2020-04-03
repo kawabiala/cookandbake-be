@@ -7,7 +7,8 @@ class Ingredient_model extends CI_Model {
         'recipe_id' => -1,
         'name' => '',
         'quantity' => 0,
-        'unity' => null
+        'unity' => null,
+        'last_modified' => 0
     );
     
     private $table_name = 'ingredient';
@@ -31,7 +32,7 @@ class Ingredient_model extends CI_Model {
     }
     
     public function get() {
-        $this->db->select('id, recipe_id, name, quantity, unity');
+        $this->db->select('id, recipe_id, name, quantity, unity, last_modified');
         if ($this->ingredient['recipe_id'] >= 0) {
         	$this->db->where('recipe_id', $this->ingredient['recipe_id']);
         } 
@@ -49,7 +50,8 @@ class Ingredient_model extends CI_Model {
             'recipe_id' => $this->ingredient['recipe_id'],
             'name' => $this->ingredient['name'],
             'quantity' => $this->ingredient['quantity'],
-            'unity' => $this->ingredient['unity']
+            'unity' => $this->ingredient['unity'],
+            'last_modified' => $this->ingredient['last_modified']
         );
         
         if ($this->db->insert($this->table_name, $data)) {
@@ -65,7 +67,8 @@ class Ingredient_model extends CI_Model {
         $data = array(
             'name' => $this->ingredient['name'],
             'quantity' => $this->ingredient['quantity'],
-            'unity' => $this->ingredient['unity']
+            'unity' => $this->ingredient['unity'],
+            'last_modified' => $this->ingredient['last_modified']
         );
         
         $this->db->where('id', $this->ingredient['id']);

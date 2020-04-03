@@ -34,6 +34,7 @@ class Ingredient extends CI_Controller {
 	            $this->ingredient_model->set_value('quantity', $this->input->input_stream('quantity'));
 	        }
             $this->ingredient_model->set_value('unity', $this->input->input_stream('unity'));
+	        $this->ingredient_model->set_value('last_modified', $this->input->input_stream('last_modified'));
         } else {
             $this->error(400, 'Data could not be inserted due to validation error'.validation_errors());
         }
@@ -60,6 +61,7 @@ class Ingredient extends CI_Controller {
             $this->ingredient_model->set_value('name', $this->input->post('name'));
             $this->ingredient_model->set_value('quantity', $this->input->post('quantity'));
             $this->ingredient_model->set_value('unity', $this->input->post('unity'));
+            $this->ingredient_model->set_value('last_modified', $this->input->post('last_modified'));
         } else {
             $this->error(400, 'Data could not be updated due to validation error'.validation_errors());
         }
