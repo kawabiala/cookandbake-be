@@ -33,6 +33,7 @@ class Ingredient extends CI_Controller {
             if ($this->input->input_stream('quantity') != null) {
 	            $this->ingredient_model->set_value('quantity', $this->input->input_stream('quantity'));
 	        }
+            $this->ingredient_model->set_value('quantity_verbal', $this->input->input_stream('quantity_verbal'));
             $this->ingredient_model->set_value('unity', $this->input->input_stream('unity'));
 	        $this->ingredient_model->set_value('last_modified', $this->input->input_stream('last_modified'));
         } else {
@@ -60,6 +61,7 @@ class Ingredient extends CI_Controller {
             $this->ingredient_model->set_value('recipe_id', $this->input->post('recipe_id'));
             $this->ingredient_model->set_value('name', $this->input->post('name'));
             $this->ingredient_model->set_value('quantity', $this->input->post('quantity'));
+            $this->ingredient_model->set_value('quantity_verbal', $this->input->post('quantity_verbal'));
             $this->ingredient_model->set_value('unity', $this->input->post('unity'));
             $this->ingredient_model->set_value('last_modified', $this->input->post('last_modified'));
         } else {
