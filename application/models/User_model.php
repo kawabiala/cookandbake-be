@@ -97,12 +97,25 @@ class User_model extends CI_Model {
 		return $this->evaluateResult($result);
 	}
 	
-	public function updateToken(	) {
+	/*
+	If the update is called from login with refresh token, we need
+	to check the old refresh token again in the database update, in order
+	to prevent racing conditions: If refresh is called twice with the same
+	token within short period of time, the token of the second request
+	might get verified, before the first request has updated it in the db.
+	Without checking again directly during update, the second request would also
+	succeed in updating the token, resulting in the response to the first request
+	holding	a token, that has already been updated again (and thus invalidated).
+	*/
+	public function updateToken($old_refresh_token = null) {
 		$data = array(
 			'refresh_token' => $this->user['refresh_token']
 		);
 		$this->db->where('uuid', $this->user['uuid']);
 		$this->db->where('user_id', $this->user['id']);
+		if (! is_null($old_refresh_token)) {
+			$this->db->where('refresh_token', $old_refresh_token);
+		}
 		
 		$result = $this->db->update($this->token_table, $data);
 

@@ -107,7 +107,29 @@ class Auth extends CI_Controller {
     		$this->error(206, 'Please confirm the account');
     	}		
 		
-		$this->login();
+		// refresh token
+		$refresh_token = $this->generateToken();
+		$this->user_model->setValue('refresh_token', $refresh_token);
+		
+		/*
+		If logging in from a new device for the first time, loadUser will set uuid to null,
+		as there is no entry for the uuid in the db.
+		*/
+		if ($this->user_model->getValue('uuid') == null) {
+			$this->user_model->setValue('uuid', $this->input->post('uuid'));
+			if (! $this->user_model->insertToken()) {
+				$this->error(400, 'Error while creating token');
+			}
+		} else {
+			if (! $this->user_model->updateToken()) {
+				$this->error(400, 'Error while creating token');
+			}
+		}
+
+		// save userid into session and send token
+		$this->session->userid = $this->user_model->getValue('id');
+		$data['refresh_token'] = $refresh_token;
+		$this->response($data);
     }
     
     // login based on refresh token
@@ -132,7 +154,19 @@ class Auth extends CI_Controller {
     		$this->error(206, 'Please confirm the account');
     	}
         
-        $this->login();
+		// refresh token
+		$refresh_token = $this->generateToken();
+		$this->user_model->setValue('refresh_token', $refresh_token);
+		
+		// update refresh token
+		if (! $this->user_model->updateToken($this->input->post('refresh_token'))) {
+			$this->error(400, 'Error while creating token');
+		}
+
+		// save userid into session and send token
+		$this->session->userid = $this->user_model->getValue('id');
+		$data['refresh_token'] = $refresh_token;
+		$this->response($data);
     }
     
     // Indicates, that a new password is needed
@@ -308,7 +342,7 @@ class Auth extends CI_Controller {
 				$this->error(400, 'Error while creating token');
 			}
 		} else {
-			if (! $this->user_model->updateToken()) {
+			if (! $this->user_model->updateToken($this->input->post('refresh_token'))) {
 				$this->error(400, 'Error while creating token');
 			}
 		}

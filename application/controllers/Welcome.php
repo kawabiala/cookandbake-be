@@ -20,6 +20,8 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
+        $this->output->set_header('Set-Cookie: cookandbake=null; max-age=0');
+        
 		//$this->load->view('welcome_message');
 		$this->load->view('home');
 	}
