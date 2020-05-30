@@ -75,6 +75,7 @@ $route['api/ingredient']['GET'] = 'ingredient/get_all';
 $route['api/(:any)'] = 'api/view/$1';
 
 $route['auth/login'] = 'auth/loginWithPassword';
+$route['auth/logout'] = 'auth/logout';
 $route['auth/refresh'] = 'auth/loginWithRefreshToken';
 $route['auth/register'] = 'auth/register';
 $route['auth/change_password'] = 'auth/changePassword';
@@ -83,3 +84,7 @@ $route['auth/new_password'] = 'auth/newPassword';
 $route['auth/confirm_registration'] = 'auth/confirmRegistration';
 
 $route['(:any)'] = 'pages/view/$1';
+$route['([a-zA-Z]{2,8})/(:any)'] = 'pages/view/$2/$1';
+$route['([a-zA-Z]{2,8})_([a-zA-Z]{2}|[0-9]{3})/(:any)'] = 'pages/view/$3/$1/$2';
+//$route['([a-zA-Z]{2,8}\_[a-zA-Z]{2})/(:any)'] = 'pages/view/$2/$1';
+//$route['([a-zA-Z]{2,8}_[0-9]{3})/(:any)'] = 'pages/view/$2/$1';
