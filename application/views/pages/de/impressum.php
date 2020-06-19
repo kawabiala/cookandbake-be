@@ -16,12 +16,5 @@
         <p>Telefon: 0170/3137630<br>
             E-Mail: <a href='mailto:jens.reufsteck@gmail.com'>jens.reufsteck@gmail.com</a>
         </p>
-                    
-        <h3>Datenschutz</h3>
-        <p>Die Nutzung der App setzt eine Registrierung unter Angabe einer gültigen Email-Adresse voraus. Die Regelungen im Einzelnen finden sich in der Datenschutzerklärung. <br>
-            Ich weise darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich. <br>
-            Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen.
-        </p>
-            
-    </body>
+	</body>
 </html>
