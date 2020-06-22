@@ -6,7 +6,7 @@
         <h1>Pingwinek Cooks</h1>
         <p>
 	        <!--img src="../resources/Samsung%20Galaxy%20S10%20Liste%20loggedout.png" height="250px"/-->
-	        <img src="<?php echo $resource_path?>/Samsung%20Galaxy%20S10%20Liste%20loggedout.png" height="250px"/>
+	        <img src="../resources/Samsung%20Galaxy%20S10%20Liste%20loggedout.png" height="250px"/>
 	        <img src="../resources/Samsung%20Galaxy%20S10%20Rezept.png" height="250px"/>
 	    </p>
         <p>
