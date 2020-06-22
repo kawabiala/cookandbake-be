@@ -99,7 +99,7 @@ class Pages extends CI_Controller {
     }
     
     private function getLocalizedPagePath($page, $language, $region) {
-    	$default_locale = 'de';
+    	$default_locale = 'en';
     	
         $path = '';
         $default_path = "pages/$default_locale/$page";
