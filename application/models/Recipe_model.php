@@ -7,6 +7,7 @@ class Recipe_model extends CI_Model {
         'user_id' => -1,
         'title' => '',
         'description' => null,
+        'uri' => null,
         'instruction' => null,
         'last_modified' => 0
     );
@@ -32,7 +33,7 @@ class Recipe_model extends CI_Model {
     }
     
     public function get() {
-        $this->db->select('id, title, description, instruction, last_modified');
+        $this->db->select('id, title, description, instruction, uri, last_modified');
         $this->db->where('user_id', $this->recipe['user_id']);
         if ($this->recipe['id'] >= 0) {
             $this->db->where('id', $this->recipe['id']);
@@ -49,6 +50,7 @@ class Recipe_model extends CI_Model {
             'title' => $this->recipe['title'],
             'description' => $this->recipe['description'],
             'instruction' => $this->recipe['instruction'],
+            'uri' => $this->recipe['uri'],
             'last_modified' => $this->recipe['last_modified']
         );
         
@@ -66,6 +68,7 @@ class Recipe_model extends CI_Model {
             'title' => $this->recipe['title'],
             'description' => $this->recipe['description'],
             'instruction' => $this->recipe['instruction'],
+            'uri' => $this->recipe['uri'],
             'last_modified' => $this->recipe['last_modified']
         );
         
@@ -89,7 +92,7 @@ class Recipe_model extends CI_Model {
         	return false;
         }
     }
-    
+    /*
     public function verify($email, $password) {
         
         $this->db->select('id, password');
@@ -102,5 +105,5 @@ class Recipe_model extends CI_Model {
         
         return password_verify($password, $hashed_password) ? $id : null;
     }
-    
+    */
 }

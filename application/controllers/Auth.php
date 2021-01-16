@@ -432,7 +432,7 @@ class Auth extends CI_Controller {
         $this->output
             ->set_status_header($code)
             ->set_content_type('application/json', 'utf-8')
-            ->set_output(json_encode($msg))
+            ->set_output(json_encode($msg, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_NUMERIC_CHECK))
             ->_display();
         exit();
     }

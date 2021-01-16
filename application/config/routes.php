@@ -73,6 +73,10 @@ $route['api/ingredient/(:num)']['GET'] = 'ingredient/get/$1';
 $route['api/recipe/(:num)/ingredient']['GET'] = 'ingredient/get_all/$1';
 $route['api/ingredient']['GET'] = 'ingredient/get_all';
 
+$route['api/files']['PUT'] = 'files/update';
+$route['api/files']['POST'] = 'files/insert';
+$route['api/files/(:any)']['GET'] = 'files/get/$1';
+
 $route['api/(:any)'] = 'api/view/$1';
 
 $route['auth/login'] = 'auth/loginWithPassword';
