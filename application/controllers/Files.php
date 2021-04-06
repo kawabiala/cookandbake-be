@@ -19,7 +19,7 @@ class Files extends CI_Controller {
 		parent::__construct();
 	}
 	
-	public function insert() {
+	public function save() {
 		$this->authorize();
 		
 		if (!isset(array_keys($_FILES)[0])) {
@@ -34,7 +34,8 @@ class Files extends CI_Controller {
 		
 		// Only white listed names are allowed
 		if ($this->check_file_name($file_name) == false) {
-			$this->error(400, 'filename not accepted');
+//			$this->error(400, 'filename not accepted');
+			$this->update();
 		}
 		
 		// Create a new empty file with unique name
@@ -62,7 +63,7 @@ class Files extends CI_Controller {
 		$this->send_response(200, array('file_id' => basename($file_name_with_suffix)));
 	}
 	
-	public function update() {
+	public function change() {
 		$this->authorize();
 		
 		if (!isset(array_keys($_FILES)[0])) {
